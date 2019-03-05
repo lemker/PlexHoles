@@ -36,8 +36,14 @@ class Main {
 
                         // Find all TV show keys
                         ArrayList<String> TVMediaShowKeys = Plex.getTVMediaShowKeys(plexHeaders, i);
-                        for (int j = 0; i < TVMediaShowKeys.size(); j++) {
-                            System.out.println("Found show with key: " + TVMediaShowKeys.get(j));
+
+                        if (TVMediaShowKeys == null || TVMediaShowKeys.isEmpty()) {
+                            System.out.println("Could not find shows!");
+                        } else {
+                            for (int j = 0; i < TVMediaShowKeys.size(); j++) {
+                                System.out.println("Found show with key: " + TVMediaShowKeys.get(j));
+                        }
+
                         }
                     }
 
