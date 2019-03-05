@@ -25,15 +25,14 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 import java.io.StringReader;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-public class Plex {
-    public static Header[] getHeaders() {
+class Plex {
+    static Header[] getHeaders() {
 
         // Merge username and password
         String userPass = Settings.getPLEX_SERVER_USERNAME() + ":" + Settings.getPLEX_SERVER_PASSWORD();
@@ -86,7 +85,7 @@ public class Plex {
         return null;
     }
 
-    public static ArrayList<String> getTVMediaContainerKeys(Header[] headers) {
+    static ArrayList<String> getTVMediaContainerKeys(Header[] headers) {
 
         HttpClient httpClient = new CustomHttpClient().get();
 
@@ -139,7 +138,7 @@ public class Plex {
         return null;
     }
 
-    public static ArrayList<String> getTVMediaShowKeys(Header[] headers, int key) {
+    static ArrayList<String> getTVMediaShowKeys(Header[] headers, int key) {
         HttpClient httpClient = new CustomHttpClient().get();
 
         System.out.println("Getting show keys...");
@@ -184,11 +183,9 @@ public class Plex {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
-
 }
