@@ -9,9 +9,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.HttpClients;
-import org.json.*;
+import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -43,14 +42,38 @@ class Plex {
         httpPost.addHeader("X-Plex-Version", "0.1");
 
         try {
+
+            Log.print("Connecting to Plex Media Server: " + Settings.getPLEX_SERVER_URL());
+
             // Get HTTP response
             HttpResponse response = httpClient.execute(httpPost);
+            int responseCode = response.getStatusLine().getStatusCode();
+
+            // Catch 401 response code
+            if (responseCode == 401) {
+                Log.print("Error while requesting Plex authentication token: 401 Unauthorized");
+                Log.print("Username/Password incorrect!");
+                return null;
+            }
+
+            // Catch 404 response code
+            if (responseCode == 404) {
+                Log.print("Error while requesting Plex authentication token: 404 Not Found");
+                return null;
+            }
+
+            if (responseCode == 406) {
+                Log.print("Error while requesting Plex authentication token: 406 Not Acceptable");
+                Log.print("URL is malformed!");
+                return null;
+            }
 
             // Create new response handler
             ResponseHandler<String> handler = new BasicResponseHandler();
 
             // Create new JSON object from response
             JSONObject obj = new JSONObject(handler.handleResponse(response));
+            System.out.println(obj);
 
             // Add Plex token header
             httpPost.addHeader("X-Plex-Token", obj.getJSONObject("user").getString("authToken"));
@@ -58,15 +81,16 @@ class Plex {
             // Remove authorization header
             httpPost.removeHeaders("Authorization");
 
-            Log.print("Success!");
+            Log.print("Successfully received Plex authentication token!");
 
             // Return headers
             return httpPost.getAllHeaders();
         } catch (Exception e) {
-            System.out.println("Error: cannot get Plex token!");
+            Log.print("Error while requesting Plex authentication token: " + e);
+            Log.print("Make sure that you are connected to the internet!");
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     /**
