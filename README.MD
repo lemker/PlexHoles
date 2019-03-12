@@ -29,13 +29,12 @@ The program will look for available media container keys. Each media container t
 The program will create "series" objects that hold important information about each series in your Plex Media Server library. Each object holds episode data, as well as a GUID used for TVDB API matching.
 
 #### Step 5 - TVDB API
-The program will used the gathered GUID information from your library to download and parse the correct series information from the TVDB API. Episodes with certain characteristics, such as "Season 0" or the aired date after the current date are skipped.
+The program will use the gathered GUID information from your library to download and parse the correct series information from the TVDB API. Episodes with certain characteristics, such as "Season 0" or the aired date after the current date are skipped.
 
-## Step 6 - Find Missing Content
+#### Step 6 - Find Missing Content
 Lastly, the program will attempt to match Plex media data to TVDB media data. Content that cannot be matched is marked as "missing" from your library.
 
-
-### TODO
+## TODO
 - Sometimes series data is duplicated while parsing Plex library
 - Sometimes series data is not found on TVDB
 - Add functionality to match top 250/500/1000 movies from IMDB
