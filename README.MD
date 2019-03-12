@@ -7,6 +7,8 @@ A quick way to find missing content in your existing Plex Media Server library -
 PlexHoles will iteratively work through your library to find missing TV episodes using the TVDB API as well as your Plex server metadata to match unique series data.
 It will do its best to match series/episode data, however if you find any error please submit an issue above.
 
+PlexHoles supports SSL/HTTPS connections to Plex and TVDB authentication servers. It can also safely connect using self-signed certificates, used by your self-hosted Plex Media Server.
+
 ## Getting Started
 To use this application you must have the following prerequisites:
 1) A Plex account. You can get one at https://www.plex.tv/
