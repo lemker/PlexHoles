@@ -18,7 +18,7 @@ import java.util.Set;
 class Plex {
     /**
      * Get Plex header information
-     * @return                 Array of Plex headers
+     * @return          Array of Plex headers
      */
     static Header[] getHeaders() {
         Log.print("Getting Plex header information...");
@@ -37,9 +37,9 @@ class Plex {
 
         // Add Plex headers
         httpPost.addHeader("Authorization", "Basic " + new String(auth));
-        httpPost.addHeader("X-Plex-Client-Identifier", "plex-tv-helper");
-        httpPost.addHeader("X-Plex-Product", "plex-tv-helper");
-        httpPost.addHeader("X-Plex-Version", "0.1");
+        httpPost.addHeader("X-Plex-Client-Identifier", "PlexHoles");
+        httpPost.addHeader("X-Plex-Product", "PlexHoles");
+        httpPost.addHeader("X-Plex-Version", "0.0.1");
 
         try {
 
@@ -73,7 +73,6 @@ class Plex {
 
             // Create new JSON object from response
             JSONObject obj = new JSONObject(handler.handleResponse(response));
-            System.out.println(obj);
 
             // Add Plex token header
             httpPost.addHeader("X-Plex-Token", obj.getJSONObject("user").getString("authToken"));
@@ -95,10 +94,16 @@ class Plex {
 
     /**
      * Get all media container keys of type "show"
-     * @param headers          Plex header information
-     * @return                 ArrayList of media container keys
+     * @param headers   Plex header information
+     * @return          ArrayList of media container keys
      */
     static ArrayList<String> getTVMediaContainerKeys(Header[] headers) {
+
+        // Check if headers are null or empty
+        if (headers == null || headers.length == 0) {
+            Log.print("Error while requesting Plex media container keys: missing Plex header information!");
+            return null;
+        }
 
         // Create new custom HttpClient
         HttpClient httpClient = new CustomHttpClient().get();
@@ -123,16 +128,18 @@ class Plex {
             return XML.parseStringAsNodesValue(responseString, "//MediaContainer/Directory[@type='show']/@key");
 
         } catch (Exception e) {
+            Log.print("Error while requesting Plex media container keys: " + e);
+            Log.print("Make sure that you are connected to the internet!");
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     /**
      * Get all rating keys
-     * @param headers          Plex header information
-     * @param key              Key that is to be found
-     * @return                 ArrayList of of series keys
+     * @param headers   Plex header information
+     * @param key       Key that is to be found
+     * @return          ArrayList of series keys
      */
     static ArrayList<String> getRatingKeys(Header[] headers, int key) {
 
@@ -173,6 +180,12 @@ class Plex {
         return null;
     }
 
+    /**
+     * Get series data
+     * @param headers   Plex Http header information
+     * @param key       Plex series key
+     * @return          PlexSeries object
+     */
     static PlexSeries getSeriesData(Header[] headers, int key) {
         // Create new custom HttpClient
         HttpClient httpClient = new CustomHttpClient().get();
@@ -257,7 +270,7 @@ class Plex {
             // Assert lists are not null
             assert (episodes != null);
 
-            ArrayList<PlexEpisode> plexEpisodes = new ArrayList<PlexEpisode>();
+            ArrayList<PlexEpisode> plexEpisodes = new ArrayList<>();
             for (int j = 0; j < episodes.size(); j++) {
                 PlexEpisode episode = new PlexEpisode();
 
@@ -272,23 +285,23 @@ class Plex {
                 }
                 // TODO Make failure case
 
-                    // Try to set episode parentIndex
-                    if (parentIndex != null && parentIndex.get(0) != null) {
-                        episode.setParentIndex(Integer.parseInt(parentIndex.get(0)));
-                    }
-                    // TODO Make failure case
-
-                    // Try to set episode index
-                    if (index != null && index.get(0) != null) {
-                        episode.setIndex(Integer.parseInt(index.get(0)));
-                    }
-
-                    // Add episode to series
-                    plexEpisodes.add(episode);
+                // Try to set episode parentIndex
+                if (parentIndex != null && parentIndex.get(0) != null) {
+                    episode.setParentIndex(Integer.parseInt(parentIndex.get(0)));
                 }
-                // Add all episodes to series
-                series.setEpisodes(plexEpisodes);
+                // TODO Make failure case
 
+                // Try to set episode index
+                if (index != null && index.get(0) != null) {
+                    episode.setIndex(Integer.parseInt(index.get(0)));
+                }
+
+                // Add episode to series
+                plexEpisodes.add(episode);
+            }
+
+            // Add all episodes to series
+            series.setEpisodes(plexEpisodes);
             return series;
 
         } catch (Exception e) {
